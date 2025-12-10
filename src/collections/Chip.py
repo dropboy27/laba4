@@ -1,7 +1,7 @@
 from classes.ChipClass import Chip
 
 
-class PlayerCollection():
+class ChipCollection():
     def __init__(self):
         self._data = []
 

@@ -18,20 +18,27 @@ def run_simulation(steps: int = 20, seed: int | None = None) -> None:
     casino.add_goose(HonkGoose("Сангвиний"))
     casino.add_goose(Goose("Робаут Жиллиман"))
 
-    print(f"=== Симуляция казино на {steps} шагов ===\n")
+    print(f"\n=== Симуляция казино на {steps} шагов ===\n")
 
     for i in range(steps):
         print(f"\n--- Шаг {i+1} ---")
-        casino.step()
+        if not casino.step():
+            print("\nСимуляция прервана досрочно!")
+            break
 
     print("\n=== Симуляция завершена ===")
-    print("\nФинальные результаты:")
+
+    print("\nФинальное состояние ИГРОКОВ:")
     for player in casino.players:
-        print(
-            f"{player.name}: баланс={casino.balances[player.name]}, HP={player.health}")
+        if player.name in casino.balances:
+            balance = casino.balances[player.name]
+        else:
+            balance = 0
+        print(f"  {player.name}: баланс={balance}, HP={player.health}")
+
+    print("\nФинальное состояние ГУСЕЙ:")
     for goose in casino.geese:
-        print(
-            f"{goose.name}: , HP={player.health}")
+        print(f"  {goose.name}: HP={goose.health}")
 
     alive_players = [p for p in casino.players if p.health > 0]
     alive_geese = [g for g in casino.geese if g.health > 0]
@@ -40,7 +47,7 @@ def run_simulation(steps: int = 20, seed: int | None = None) -> None:
     print(f"Живых гусей: {len(alive_geese)}")
 
     if len(alive_players) > len(alive_geese):
-        print("\nПОБЕДА ЛЮДЕЙ")
+        print("\nПОБЕДА ЛЮДЕЙ!")
     elif len(alive_geese) > len(alive_players):
         print("\nПОБЕДА ГУСЕЙ!")
     else:

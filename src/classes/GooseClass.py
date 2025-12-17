@@ -28,7 +28,7 @@ class HonkGoose(Goose):
         super().__init__(name, honk_volume, health, agility, max_health)
 
     def scream(self):
-        '''Если станит, то уменьшает агилити человека на 5'''
+        '''Если станит, то уменьшает агилити человека на 10'''
         stan_chance = self.health/self.max_health*self.agility*random()
         if stan_chance > 42:
             stan = True

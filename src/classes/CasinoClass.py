@@ -14,8 +14,6 @@ class Casino():
         self.players = PlayerCollection()
         self.geese = GooseCollection()
         self.balances = CasinoBalance()
-        self.chips = ChipCollection()
-        self.active_bets = {}
 
     def add_player(self, player):
         self.players.append(player)
@@ -60,17 +58,23 @@ class Casino():
             return
 
         roll = random.randint(1, 20)
-        attack_roll = roll * (goose.agility / player.agility)
+        attack_roll = roll * (goose.agility / player.agility)+0.5
 
         if attack_roll > 10:
             if hasattr(goose, 'attack_power'):
                 damage = goose.attack_power
             else:
-                damage = 5
+                damage = goose.honk_volume//4
 
             player.health -= damage
             print(
                 f"[GOOSE] {goose_name} атакует {player_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПОПАЛ! Урон: {damage}, HP: {player.health}")
+            if player.health <= 0:
+                print(
+                    f"[DEATH] {player_name} пал смертью храбрых от клюва {goose_name}...")
+                self.players.remove(player)
+                if player.name in self.balances:
+                    del self.balances[player.name]
         else:
             print(
                 f"[GOOSE] {goose_name} атакует {player_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
@@ -99,7 +103,7 @@ class Casino():
         stunned = goose.scream()
 
         if stunned:
-            player.agility -= 5
+            player.agility -= 10
             print(
                 f"[GOOSE] {goose_name} КРИЧИТ на {player_name}! Agility уменьшена до {player.agility}")
         else:
@@ -127,14 +131,17 @@ class Casino():
         attack_roll = roll * (player.agility / goose.agility)
 
         if attack_roll > 10:
-            damage = 5
-
+            damage = 5*random.randint(1, 8)
             goose.health -= damage
             print(
-                f"[GOOSE] {player_name} атакует {goose_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПОПАЛ! Урон: {damage}, HP: {goose.health}")
+                f"[PLAYER] {player_name} атакует {goose_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПОПАЛ! Урон: {damage}, HP гуся: {goose.health}")
+
+            if goose.health <= 0:
+                print(f"[DEATH] Гусь {goose_name} был сражен {player_name}!")
+                self.geese.remove(goose)
         else:
             print(
-                f"[GOOSE] {player_name} атакует {goose_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
+                f"[PLAYER] {player_name} атакует {goose_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
 
     def steal_money(self):
         """Гусь крадет деньги у игрока"""
@@ -146,7 +153,7 @@ class Casino():
                 f"[GOOSE] {goose.name} пытается украсть у {player.name}, но денег почти нет")
             return
 
-        stolen = random.randint(10, 50)
+        stolen = random.randint(10, 1000)
         stolen = min(stolen, self.balances[player.name])
 
         self.balances.subtract_balance(player.name, stolen)
@@ -169,7 +176,7 @@ class Casino():
 
         if event == 'gambling':
             player = random.choice(self.players)
-            amount = random.choice([10, 25, 50, 100])
+            amount = random.choice([10, 25, 50, 100]) * random.randint(1, 10)
             self.gambling(player.name, amount)
 
         elif event == 'goose_attack':
@@ -191,3 +198,4 @@ class Casino():
 
         elif event == 'steal_money':
             self.steal_money()
+        return True

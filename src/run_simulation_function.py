@@ -7,7 +7,6 @@ from src.classes.GooseClass import Goose, WarGoose, HonkGoose
 def run_simulation(steps: int = 20, seed: int | None = None) -> None:
     if seed is not None:
         random.seed(seed)
-
     casino = Casino()
 
     casino.add_player(Player("Хорус Луперкаль", 1000))

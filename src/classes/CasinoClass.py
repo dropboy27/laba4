@@ -143,6 +143,62 @@ class Casino():
             print(
                 f"[PLAYER] {player_name} атакует {goose_name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
 
+    def event_buy_rake(self):
+        """Игрок покупает грабли и атакует"""
+        player = random.choice(self.players)
+
+        if self.balances[player.name] < 300:
+            print(
+                f"[GRABLI] {player.name} хочет купить грабли, но нужно 300 (есть {self.balances[player.name]})")
+            return
+
+        self.balances.subtract_balance(player.name, 300)
+        print(f"[GRABLI] {player.name} купил ГРАБЛИ за 300!")
+
+        if random.random() < 0.5 and len(self.geese) > 0:
+            goose = random.choice(self.geese)
+            roll = random.randint(1, 20)
+            attack_roll = roll * (player.agility / goose.agility)
+
+            if attack_roll > 10:
+                damage = 5*random.randint(1, 8) * 2
+                goose.health -= damage
+                print(
+                    f"[GRABLI] {player.name} РАЗМАХИВАЕТ ГРАБЛЯМИ по {goose.name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПОПАЛ! Урон: {damage}, HP гуся: {goose.health}")
+
+                if goose.health <= 0:
+                    print(
+                        f"[DEATH] Гусь {goose.name} был беспощадно сражен {player.name} при помощи граблей!")
+                    self.geese.remove(goose)
+            else:
+                print(
+                    f"[GRABLI] {player.name} замахнулся граблями на {goose.name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
+
+        elif len(self.players) > 1:
+            other_players = [p for p in self.players if p.name != player.name]
+            if other_players:
+                victim = random.choice(other_players)
+                roll = random.randint(1, 20)
+                attack_roll = roll * (player.agility / victim.agility)
+
+                if attack_roll > 10:
+                    stolen = self.balances[victim.name] // 2
+                    damage = 5*random.randint(1, 5)
+                    victim.health -= damage
+                    if stolen > 0:
+                        self.balances.subtract_balance(victim.name, stolen)
+                        self.balances.add_balance(player.name, stolen)
+                        print(
+                            f"[GRABLI] {player.name} УДАРИЛ ГРАБЛЯМИ {victim.name} и забрал {stolen} денег и нанес {damage} урона ! Бросок: {roll}, итог: {attack_roll:.2f}")
+                    else:
+                        print(
+                            f"[GRABLI] {player.name} ударил {victim.name} граблями и нанес {damage} урона, но у того нет денег!")
+                else:
+                    print(
+                        f"[GRABLI] {player.name} замахнулся граблями на {victim.name}! Бросок: {roll}, итог: {attack_roll:.2f} - ПРОМАХ!")
+        else:
+            print(f"[GRABLI] {player.name} купил грабли, но некого атаковать!")
+
     def steal_money(self):
         """Гусь крадет деньги у игрока"""
         goose = random.choice(self.geese)
@@ -170,10 +226,11 @@ class Casino():
             'goose_scream',
             'player_attack',
             'steal_money',
+            'buy_rake'
         ]
 
         event = random.choice(events)
-
+        print(f"[DEBUG] событие {event}")
         if event == 'gambling':
             player = random.choice(self.players)
             amount = random.choice([10, 25, 50, 100]) * random.randint(1, 10)
@@ -195,7 +252,8 @@ class Casino():
             goose = random.choice(self.geese)
             player = random.choice(self.players)
             self.player_attack(goose.name, player.name)
-
+        elif event == 'buy_rake':
+            self.event_buy_rake()
         elif event == 'steal_money':
             self.steal_money()
         return True

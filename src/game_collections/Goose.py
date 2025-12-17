@@ -1,4 +1,4 @@
-from classes.GooseClass import Goose
+from src.classes.GooseClass import Goose
 
 
 class GooseCollection():

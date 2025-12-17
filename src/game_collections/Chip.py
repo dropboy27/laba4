@@ -1,7 +1,7 @@
-from classes.PlayerClass import Player
+from src.classes.ChipClass import Chip
 
 
-class PlayerCollection():
+class ChipCollection():
     def __init__(self):
         self._data = []
 
@@ -18,42 +18,42 @@ class PlayerCollection():
         return iter(self._data)
 
     def append(self, item):
-        if not isinstance(item, Player):
-            raise TypeError("Можно добавлять только объекты Player")
+        if not isinstance(item, Chip):
+            raise TypeError("Можно добавлять только объекты Chip")
         if item in self._data:
-            print(f"[PLAYER_COLLECTION] Игрок {item.name} уже в коллекции")
+            print(f"[CHIP_COLLECTION] Фишка {item.name} уже в коллекции")
             return False
 
         self._data.append(item)
-        print(f"[PLAYER_COLLECTION] Игрок {item.name} добавлен")
+        print(f"[CHIP_COLLECTION] Фишка {item.name} добавлена")
         return True
 
     def remove(self, item):
         if item not in self._data:
-            print(f"[PLAYER_COLLECTION] Игрок {item.name} не найден")
+            print(f"[CHIP_COLLECTION] Фишка {item.name} не найдена")
             return False
         self._data.remove(item)
-        print(f"[PLAYER_COLLECTION] Игрок {item.name} удален")
+        print(f"[CHIP_COLLECTION] Фишка {item.name} удалена")
         return True
 
     def remove_by_name(self, name):
         for player in self._data:
             if player.name == name:
                 self._data.remove(player)
-                print(f"[PLAYER_COLLECTION] Игрок {name} удален")
+                print(f"[CHIP_COLLECTION] Фишка {name} удалена")
                 return None
-        print(f"[PLAYER_COLLECTION] Игрок {name} не найден")
+        print(f"[CHIP_COLLECTION] Фишка {name} не найдена")
         return None
 
     def pop(self, index=-1):
         if len(self) == 0:
-            print("[PLAYER_COLLECTION] Коллекция пуста")
+            print("[CHIP_COLLECTION] Коллекция пуста")
             return None
         try:
             player = self._data.pop(index)
             print(
-                f"[PLAYER_COLLECTION] Игрок {player.name} удален (индекс {index})")
+                f"[CHIP_COLLECTION] Фишка {player.name} удалена (индекс {index})")
             return player
         except IndexError:
-            print(f"[PLAYER_COLLECTION] Индекс {index} вне диапазона")
+            print(f"[CHIP_COLLECTION] Индекс {index} вне диапазона")
             return None

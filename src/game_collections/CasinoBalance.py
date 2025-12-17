@@ -6,7 +6,6 @@ class CasinoBalance:
         if key in self._data:
             old_balance = self._data[key]
             self._data[key] = value
-            print(f"[CASINO] Баланс {key}: {old_balance} -> {value}")
         else:
             self._data[key] = value
             print(f"[CASINO] Новый игрок {key} с балансом {value}")

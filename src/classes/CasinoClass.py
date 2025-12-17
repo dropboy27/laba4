@@ -230,7 +230,6 @@ class Casino():
         ]
 
         event = random.choice(events)
-        print(f"[DEBUG] событие {event}")
         if event == 'gambling':
             player = random.choice(self.players)
             amount = random.choice([10, 25, 50, 100]) * random.randint(1, 10)

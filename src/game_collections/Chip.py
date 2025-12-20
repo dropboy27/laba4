@@ -1,4 +1,5 @@
 from src.classes.ChipClass import Chip
+from src.errors import InvalidItemError, ItemNotFoundError, EmptyCollectionError
 
 
 class ChipCollection():
@@ -9,7 +10,7 @@ class ChipCollection():
         if isinstance(index, (int | slice)):
             return self._data[index]
         else:
-            raise TypeError("Индекс должен быть int или slice")
+            raise InvalidItemError("Индекс должен быть int или slice")
 
     def __delitem__(self, index):
         del self._data[index]
@@ -22,7 +23,7 @@ class ChipCollection():
 
     def append(self, item):
         if not isinstance(item, Chip):
-            raise TypeError("Можно добавлять только объекты Chip")
+            raise InvalidItemError("Можно добавлять только объекты Chip")
         if item in self._data:
             print(f"[CHIP_COLLECTION] Фишка {item.value} уже в коллекции")
             return False
@@ -33,8 +34,7 @@ class ChipCollection():
 
     def remove(self, item):
         if item not in self._data:
-            print(f"[CHIP_COLLECTION] Фишка {item.value} не найдена")
-            return False
+            raise ItemNotFoundError(f"Фишка {item.value} не найдена")
         self._data.remove(item)
         print(f"[CHIP_COLLECTION] Фишка {item.value} удалена")
         return True
@@ -45,18 +45,15 @@ class ChipCollection():
                 self._data.remove(chip)
                 print(f"[CHIP_COLLECTION] Фишка {value} удалена")
                 return
-        print(f"[CHIP_COLLECTION] Фишка {value} не найдена")
-        return None
+        raise ItemNotFoundError(f"Фишка со значением {value} не найдена")
 
     def pop(self, index=-1):
         if len(self) == 0:
-            print("[CHIP_COLLECTION] Коллекция пуста")
-            return None
+            raise EmptyCollectionError("Коллекция фишек пуста")
         try:
             chip = self._data.pop(index)
             print(
                 f"[CHIP_COLLECTION] Фишка {chip.value} удалена (индекс {index})")
             return chip
         except IndexError:
-            print(f"[CHIP_COLLECTION] Индекс {index} вне диапазона")
-            return None
+            raise ItemNotFoundError(f"Индекс {index} вне диапазона")

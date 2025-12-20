@@ -1,4 +1,5 @@
 from src.classes.GooseClass import Goose
+from src.errors import InvalidItemError, ItemNotFoundError, EmptyCollectionError
 
 
 class GooseCollection():
@@ -9,7 +10,7 @@ class GooseCollection():
         if isinstance(index, (int | slice)):
             return self._data[index]
         else:
-            raise TypeError("Индекс должен быть int или slice")
+            raise InvalidItemError("Индекс должен быть int или slice")
 
     def __len__(self):
         return len(self._data)
@@ -19,7 +20,7 @@ class GooseCollection():
 
     def append(self, item):
         if not isinstance(item, Goose):
-            raise TypeError("Можно добавлять только объекты Goose")
+            raise InvalidItemError("Можно добавлять только объекты Goose")
         if item in self._data:
             print(f"[GOOSE_COLLECTION] Гусь {item.name} уже в коллекции")
             return False
@@ -30,8 +31,7 @@ class GooseCollection():
 
     def remove(self, item):
         if item not in self._data:
-            print(f"[GOOSE_COLLECTION] Гусь {item.name} не найден")
-            return False
+            raise ItemNotFoundError(f"Гусь {item.name} не найден")
         self._data.remove(item)
         print(f"[GOOSE_COLLECTION] Гусь {item.name} удален")
         return True
@@ -42,18 +42,15 @@ class GooseCollection():
                 self._data.remove(goose)
                 print(f"[GOOSE_COLLECTION] Гусь {name} удален")
                 return None
-        print(f"[GOOSE_COLLECTION] Гусь {name} не найден")
-        return None
+        raise ItemNotFoundError(f"Гусь с именем {name} не найден")
 
     def pop(self, index=-1):
         if len(self) == 0:
-            print("[GOOSE_COLLECTION] Коллекция пуста")
-            return None
+            raise EmptyCollectionError("Коллекция гусей пуста")
         try:
             goose = self._data.pop(index)
             print(
                 f"[GOOSE_COLLECTION] Гусь {goose.name} удален (индекс {index})")
             return goose
         except IndexError:
-            print(f"[GOOSE_COLLECTION] Индекс {index} вне диапазона")
-            return None
+            raise ItemNotFoundError(f"Индекс {index} вне диапазона")

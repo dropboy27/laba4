@@ -1,7 +1,38 @@
 class NotEnoughMoneyError(Exception):
-    def __init__(self, player_name, balance, required):
-        self.player_name = player_name
-        self.balance = balance
-        self.required = required
-        message = f"У {player_name} недостаточно денег: есть {balance}, нужно {required}"
-        super().__init__(message)
+    """Недостаточно денег на балансе"""
+    pass
+
+
+class InvalidOperationError(Exception):
+    """Некорректная операция с балансом"""
+    pass
+
+
+class PlayerNotFoundError(Exception):
+    """Игрок не найден в казино"""
+    pass
+
+
+class InvalidItemError(Exception):
+    """Неправильный тип элемента для коллекции"""
+    pass
+
+
+class ItemNotFoundError(Exception):
+    """Элемент не найден в коллекции"""
+    pass
+
+
+class EmptyCollectionError(Exception):
+    """Операция с пустой коллекцией"""
+    pass
+
+
+class ChipSplitError(Exception):
+    """Невозможно разделить фишку"""
+    pass
+
+
+class InvalidStatsError(Exception):
+    """Некорректные характеристики существа"""
+    pass

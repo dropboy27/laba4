@@ -1,8 +1,16 @@
 from random import random
+from src.errors import InvalidStatsError
 
 
 class Goose():
     def __init__(self, name, honk_volume=30, health=50, agility=50, max_health=50):
+        if health < 0 or max_health < 0 or honk_volume < 0 or agility < 0:
+            raise InvalidStatsError(
+                "Характеристики не могут быть отрицательными")
+        if health > max_health:
+            raise InvalidStatsError(
+                f"Здоровье ({health}) не может превышать максимум ({max_health})")
+
         self.name = name
         self.max_health = max_health
         self.health = health
@@ -17,6 +25,8 @@ class Goose():
 class WarGoose(Goose):
     def __init__(self, name, honk_volume=50, health=70, agility=40, max_health=70, attack_power=100):
         super().__init__(name, honk_volume, health, agility, max_health)
+        if attack_power < 0:
+            raise InvalidStatsError("Сила атаки не может быть отрицательной")
         self.attack_power = attack_power
 
     def attack(self):

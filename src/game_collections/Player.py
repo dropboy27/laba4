@@ -1,4 +1,5 @@
 from src.classes.PlayerClass import Player
+from src.errors import InvalidItemError, ItemNotFoundError, EmptyCollectionError
 
 
 class PlayerCollection():
@@ -9,7 +10,7 @@ class PlayerCollection():
         if isinstance(index, (int | slice)):
             return self._data[index]
         else:
-            raise TypeError("Индекс должен быть int или slice")
+            raise InvalidItemError("Индекс должен быть int или slice")
 
     def __len__(self):
         return len(self._data)
@@ -19,7 +20,7 @@ class PlayerCollection():
 
     def append(self, item):
         if not isinstance(item, Player):
-            raise TypeError("Можно добавлять только объекты Player")
+            raise InvalidItemError("Можно добавлять только объекты Player")
         if item in self._data:
             print(f"[PLAYER_COLLECTION] Игрок {item.name} уже в коллекции")
             return False
@@ -30,8 +31,8 @@ class PlayerCollection():
 
     def remove(self, item):
         if item not in self._data:
-            print(f"[PLAYER_COLLECTION] Игрок {item.name} не найден")
-            return False
+            raise ItemNotFoundError(
+                f"[PLAYER_COLLECTION] Игрок {item.name} не найден")
         self._data.remove(item)
         print(f"[PLAYER_COLLECTION] Игрок {item.name} удален")
         return True
@@ -42,18 +43,15 @@ class PlayerCollection():
                 self._data.remove(player)
                 print(f"[PLAYER_COLLECTION] Игрок {name} удален")
                 return None
-        print(f"[PLAYER_COLLECTION] Игрок {name} не найден")
-        return None
+        raise ItemNotFoundError(f"[PLAYER_COLLECTION] Игрок {name} не найден")
 
     def pop(self, index=-1):
         if len(self) == 0:
-            print("[PLAYER_COLLECTION] Коллекция пуста")
-            return None
+            raise EmptyCollectionError("Коллекция игроков пуста")
         try:
             player = self._data.pop(index)
             print(
                 f"[PLAYER_COLLECTION] Игрок {player.name} удален (индекс {index})")
             return player
         except IndexError:
-            print(f"[PLAYER_COLLECTION] Индекс {index} вне диапазона")
-            return None
+            raise ItemNotFoundError(f"Индекс {index} вне диапазона")

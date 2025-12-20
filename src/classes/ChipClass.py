@@ -1,3 +1,6 @@
+from src.errors import ChipSplitError
+
+
 class Chip():
     def __init__(self, value, owner):
         self.value = value
@@ -22,5 +25,5 @@ class Chip():
             chip2 = Chip(half, self.owner)
             return chip1, chip2
         else:
-            raise ValueError(
-                f"Cannot split chip with value {self.value} (minimum 50)")
+            raise ChipSplitError(
+                f"Невозможно разделить фишку номиналом {self.value} (минимум 50)")

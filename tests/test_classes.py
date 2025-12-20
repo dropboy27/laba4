@@ -2,6 +2,15 @@ import pytest
 from src.classes.PlayerClass import Player
 from src.classes.GooseClass import Goose, WarGoose, HonkGoose
 from src.classes.ChipClass import Chip
+from src.errors import (
+    InvalidItemError,
+    ItemNotFoundError,
+    EmptyCollectionError,
+    PlayerNotFoundError,
+    InvalidOperationError,
+    ChipSplitError,
+    InvalidStatsError
+)
 
 
 class TestPlayer:
@@ -23,6 +32,14 @@ class TestPlayer:
 
         assert player.check_health() == 100
 
+    def test_negative_balance(self):
+        with pytest.raises(InvalidStatsError):
+            Player("Test", -100)
+
+    def test_negative_health(self):
+        with pytest.raises(InvalidStatsError):
+            Player("Test", 1000, health=-10)
+
 
 class TestGoose:
     def test_init(self):
@@ -40,6 +57,10 @@ class TestGoose:
         assert isinstance(result, (int, float))
         assert result > 0
 
+    def test_negative_stats(self):
+        with pytest.raises(InvalidStatsError):
+            Goose("Test", health=-10)
+
 
 class TestWarGoose:
     def test_init(self):
@@ -55,6 +76,10 @@ class TestWarGoose:
         assert isinstance(goose, Goose)
         result = goose.honk()
         assert isinstance(result, (int, float))
+
+    def test_negative_attack_power(self):
+        with pytest.raises(InvalidStatsError):
+            WarGoose("Test", attack_power=-10)
 
 
 class TestHonkGoose:
@@ -117,5 +142,5 @@ class TestChip:
     def test_split_too_small(self):
         chip = Chip(40, "Player1")
 
-        with pytest.raises(ValueError):
+        with pytest.raises(ChipSplitError):
             chip.split()

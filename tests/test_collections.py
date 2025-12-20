@@ -6,6 +6,14 @@ from src.game_collections.Goose import GooseCollection
 from src.game_collections.CasinoBalance import CasinoBalance
 from src.classes.PlayerClass import Player
 from src.classes.GooseClass import Goose
+from src.errors import (
+    InvalidItemError,
+    ItemNotFoundError,
+    EmptyCollectionError,
+    PlayerNotFoundError,
+    InvalidOperationError,
+    NotEnoughMoneyError
+)
 
 
 class TestPlayerCollection:
@@ -39,9 +47,9 @@ class TestPlayerCollection:
     def test_remove_nonexistent(self):
         collection = PlayerCollection()
         player = Player("Test", 100)
-        result = collection.remove(player)
 
-        assert result == False
+        with pytest.raises(ItemNotFoundError):
+            collection.remove(player)
 
     def test_getitem_index(self):
         collection = PlayerCollection()
@@ -98,8 +106,9 @@ class TestPlayerCollection:
 
     def test_pop_empty(self):
         collection = PlayerCollection()
-        result = collection.pop()
-        assert result == None
+
+        with pytest.raises(EmptyCollectionError):
+            collection.pop()
 
     def test_remove_by_name(self):
         collection = PlayerCollection()
@@ -111,13 +120,14 @@ class TestPlayerCollection:
 
     def test_remove_by_name_nonexistent(self):
         collection = PlayerCollection()
-        result = collection.remove_by_name("Nonexistent")
-        assert result == None
+
+        with pytest.raises(ItemNotFoundError):
+            collection.remove_by_name("Nonexistent")
 
     def test_append_wrong_type(self):
         collection = PlayerCollection()
 
-        with pytest.raises(TypeError):
+        with pytest.raises(InvalidItemError):
             collection.append("not a player")
 
     def test_pop_invalid_index(self):
@@ -125,8 +135,8 @@ class TestPlayerCollection:
         player = Player("Test", 100)
         collection.append(player)
 
-        result = collection.pop(10)
-        assert result == None
+        with pytest.raises(ItemNotFoundError):
+            collection.pop(10)
 
 
 class TestGooseCollection:
@@ -167,7 +177,7 @@ class TestGooseCollection:
     def test_append_wrong_type(self):
         collection = GooseCollection()
 
-        with pytest.raises(TypeError):
+        with pytest.raises(InvalidItemError):
             collection.append("not a goose")
 
     def test_pop_index(self):
@@ -186,13 +196,14 @@ class TestGooseCollection:
         goose = Goose("Test")
         collection.append(goose)
 
-        result = collection.pop(10)
-        assert result == None
+        with pytest.raises(ItemNotFoundError):
+            collection.pop(10)
 
     def test_remove_by_name_nonexistent(self):
         collection = GooseCollection()
-        result = collection.remove_by_name("Nonexistent")
-        assert result == None
+
+        with pytest.raises(ItemNotFoundError):
+            collection.remove_by_name("Nonexistent")
 
 
 class TestCasinoBalance:
@@ -213,7 +224,7 @@ class TestCasinoBalance:
     def test_getitem_nonexistent(self):
         balance = CasinoBalance()
 
-        with pytest.raises(KeyError):
+        with pytest.raises(PlayerNotFoundError):
             _ = balance["Nonexistent"]
 
     def test_contains(self):
@@ -256,21 +267,21 @@ class TestCasinoBalance:
     def test_delitem_nonexistent(self):
         balance = CasinoBalance()
 
-        with pytest.raises(KeyError):
+        with pytest.raises(PlayerNotFoundError):
             del balance["Nonexistent"]
 
     def test_add_balance_negative(self):
         balance = CasinoBalance()
         balance["Test"] = 1000
 
-        with pytest.raises(ValueError):
+        with pytest.raises(InvalidOperationError):
             balance.add_balance("Test", -100)
 
     def test_subtract_balance_negative(self):
         balance = CasinoBalance()
         balance["Test"] = 1000
 
-        with pytest.raises(ValueError):
+        with pytest.raises(InvalidOperationError):
             balance.subtract_balance("Test", -100)
 
     def test_add_balance_new_player(self):
@@ -292,7 +303,7 @@ class TestCasinoBalance:
         def test_append_wrong_type(self):
             collection = ChipCollection()
 
-            with pytest.raises(TypeError):
+            with pytest.raises(InvalidItemError):
                 collection.append("not a chip")
 
         def test_getitem(self):
@@ -334,16 +345,17 @@ class TestCasinoBalance:
 
         def test_pop_empty(self):
             collection = ChipCollection()
-            result = collection.pop()
-            assert result == None
+
+            with pytest.raises(EmptyCollectionError):
+                collection.pop()
 
         def test_pop_invalid_index(self):
             collection = ChipCollection()
             chip = Chip(100, "player1")
             collection.append(chip)
 
-            result = collection.pop(10)
-            assert result == None
+            with pytest.raises(ItemNotFoundError):
+                collection.pop(10)
 
         def test_remove_by_value(self):
             collection = ChipCollection()
@@ -355,8 +367,9 @@ class TestCasinoBalance:
 
         def test_remove_by_value_nonexistent(self):
             collection = ChipCollection()
-            result = collection.remove_by_value(999)
-            assert result == None
+
+            with pytest.raises(ItemNotFoundError):
+                collection.remove_by_value(999)
 
         def test_len(self):
             collection = ChipCollection()

@@ -2,6 +2,13 @@ import pytest
 from src.classes.CasinoClass import Casino
 from src.classes.PlayerClass import Player
 from src.classes.GooseClass import Goose, WarGoose, HonkGoose
+from src.errors import (
+    InvalidItemError,
+    ItemNotFoundError,
+    EmptyCollectionError,
+    PlayerNotFoundError,
+    InvalidOperationError
+)
 
 
 class TestCasino:
@@ -117,8 +124,8 @@ class TestCasino:
         casino.add_player(player)
         casino.add_goose(goose)
 
-        casino.goose_scream("Regular", "Test")
-        assert True
+        with pytest.raises(InvalidItemError):
+            casino.goose_scream("Regular", "Test")
 
     def test_event_buy_rake(self):
         casino = Casino()

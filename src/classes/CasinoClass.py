@@ -4,6 +4,8 @@ from src.game_collections.Goose import GooseCollection
 from src.game_collections.Player import PlayerCollection
 from src.classes.GooseClass import Goose, WarGoose, HonkGoose
 from src.classes.PlayerClass import Player
+from src.errors import NotEnoughMoneyError, ItemNotFoundError, EmptyCollectionError, PlayerNotFoundError,  InvalidItemError
+
 
 from src.errors import NotEnoughMoneyError
 import random
@@ -54,8 +56,8 @@ class Casino():
                 break
 
         if not goose or not player:
-            print("Гусь или игрок не найден")
-            return
+            raise ItemNotFoundError(
+                f"Гусь {goose_name} или игрок {player_name} не найден")
 
         roll = random.randint(1, 20)
         attack_roll = roll * (goose.agility / player.agility)+0.5
@@ -93,12 +95,12 @@ class Casino():
                 break
 
         if not goose or not player:
-            print("Гусь или игрок не найден")
-            return
+            raise ItemNotFoundError(
+                f"Гусь {goose_name} или игрок {player_name} не найден")
 
         if not isinstance(goose, HonkGoose):
-            print("Этот гусь не умеет кричать.")
-            return
+            raise InvalidItemError(
+                f"Гусь {goose_name} не умеет кричать (не HonkGoose)")
 
         stunned = goose.scream()
 
@@ -124,8 +126,8 @@ class Casino():
                 break
 
         if not goose or not player:
-            print("Гусь или игрок не найден")
-            return
+            raise ItemNotFoundError(
+                f"Гусь {goose_name} или игрок {player_name} не найден")
 
         roll = random.randint(1, 20)
         attack_roll = roll * (player.agility / goose.agility)
@@ -217,8 +219,7 @@ class Casino():
 
     def step(self):
         if len(self.players) == 0 or len(self.geese) == 0:
-            print("[SIMULATION] Недостаточно участников")
-            return
+            raise EmptyCollectionError("Недостаточно участников для симуляции")
 
         events = [
             'gambling',

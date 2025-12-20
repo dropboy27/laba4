@@ -3,6 +3,13 @@ from src.run_simulation_function import run_simulation
 from src.classes.CasinoClass import Casino
 from src.classes.PlayerClass import Player
 from src.classes.GooseClass import Goose
+from src.errors import (
+    InvalidItemError,
+    ItemNotFoundError,
+    EmptyCollectionError,
+    PlayerNotFoundError,
+    InvalidOperationError
+)
 
 
 def test_simulation_runs():
@@ -35,6 +42,6 @@ def test_simulation_with_seed_reproducible():
 
 def test_empty_simulation():
     casino = Casino()
-    result = casino.step()
 
-    assert result == None
+    with pytest.raises(EmptyCollectionError):
+        casino.step()
